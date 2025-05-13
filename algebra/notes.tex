@@ -1,64 +1,89 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{multicol}
+\usepackage[a4paper, portrait, margin=1.2in]{geometry}
+\usepackage{makeidx}
+\makeindex
 
 \title {Algebra Lineare e Geometria}
 \author {Pietro Ballarin}
 
 \begin{document}
-
 \maketitle
-\pagebreak
+\tableofcontents
 
-\makeindex
+\chapter{Introduzione}
+Corso a cura di Mauro Costantini. Barbaro barbaroso
 
-\subsection*{Introduzione}
-Corso a cura di Mauro Costantini.
-
-\subsubsection*{Programma del corso}
+\section {Programma del corso}
 \begin{itemize}
-\item Spazi vettoriali
-\item Sottospazi vettoriali
-\item Funzioni lineari
-\item Matrici
-\item Sistemi di equazioni lineari
-\item Autovalori ed autovettori
-\item Prodotti scalari
-\item Spazi affini ed euclidei
+    \item Spazi vettoriali
+    \item Sottospazi vettoriali
+    \item Funzioni lineari
+    \item Matrici
+    \item Sistemi di equazioni lineari
+    \item Autovalori ed autovettori
+    \item Prodotti scalari
+    \item Spazi affini ed euclidei
 \end{itemize}
 
-\subsection*{Spazi vettoriali}
+\chapter{Spazi vettoriali}
 
-\subsubsection*{Campi di numeri}
+\section{Campi di numeri}
 
 Lavoreremo con insiemi numerici dotati delle operazioni di somma ($+$)
 e prodotto ($\cdot$) con le cosiddette \textbf{proprietà di campo}.
 Per la somma:
 \begin{itemize}
-\item Associativa
-\item Commutativa
-\item Esistenza elemento neutro ($0$)
-\item Esistenza dell'opposto ($-a$)
+    \item Associativa
+    \item Commutativa
+    \item Esistenza elemento neutro ($0$)
+    \item Esistenza dell'opposto ($-a$)
 \end{itemize}
 Per il prodotto:
 \begin{itemize}
-\item Associativa
-\item Commutativa
-\item Elemento neutro ($1$)
-\item Distributiva
-\item Esistenza dell'inverso ($1/a$ oppure $a^{-1}$)
+    \item Associativa
+    \item Commutativa
+    \item Elemento neutro ($1$)
+    \item Distributiva
+    \item Esistenza dell'inverso ($1/a$ oppure $a^{-1}$)
 \end{itemize}
-
 Un insieme con queste caratteristiche prende il nome di \textbf{campo}.
 Baseremo la definizione di spazio vettoriale su questo concetto poiché
 con queste proprietà siamo in grado di risolvere equazioni di primo grado,
 essenziali per la risoluzione dei sistemi lineari e per la teoria stessa
 della materia.
 
-\subsubsection*{Spazio vettoriale}
+\section{Definizione}
 
 Uno spazio vettoriale su un campo $K$ è un insieme non vuoto dotato di
 due operazioni: \textbf{somma} ($+$) e \textbf{prodotto di un vettore per uno scalare} ($\cdot$).
+Dove per \textbf{scalare} intendiamo un elemento del campo $K$ mentre per \textbf{vettore} intendiamo
+un elemento dello spazio vettoriale.
+
+\section{Esempi di spazi vettoriali}
+Alcuni esempi presenti negli appunti del docente:
+\begin{itemize}
+    \item{Le n-uple di elementi di un campo $K$}
+    \item{I polinomi}
+\end{itemize}
+
+\section{Combinazioni lineari}
+Sia $V$ uno spazio vettoriale sul campo $K$ siano $v_1, ..., v_n \in V$ e $\lambda_1, ..., \lambda_n \in K$
+si dice combinazione lineare dei vettori di $V$ il vettore:
+$$ \lambda_1 v_1 + \lambda_2 v_2 + ... + \lambda_n v_n $$
+
+\section {Vettori linearmente dipendenti e indipendenti}
+
+\subsection {Vettori linearmente indipendenti}
+I vettori $v_1, ..., v_n$ si dicono linearmente indipendenti se l'unica soluzione di
+$ \lambda_1 v_1 + \lambda_2 v_2 + ... + \lambda_n v_n = 0 $ e' valida solo per
+$\lambda_1 = \lambda_2 = ... = \lambda_n = 0$
+
+\subsection {Vettori linearmente dipendenti}
+I vettori si dicono linearmente dipendenti se non sono linearmente indipendenti ovvero se esistono
+dei coefficienti non tutti nulli tali che la loro combinazione lineare e' nulla
 
 \end{document}
