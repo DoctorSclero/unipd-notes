@@ -15,23 +15,6 @@ struct header {
     char* value;
 };
 
-int pb_strcmp(char* s1, char* s2) {
-    while (!(*s1) || !(*s2)) {
-        if ((*(s1++)) != (*(s2++)))
-            return 0;
-    }
-    return 1;
-}
-
-int pb_stoi(char* s) {
-    int res = 0;
-    while (*s != 0) {
-        res*=10;
-        res+=*s-'0';
-    }
-    return res;
-}
-
 int main() {
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -54,19 +37,11 @@ int main() {
         return errno;
     }
 
-    //  
-    //  REQUEST GENERATION AND DELIVER
-    //
-
     // Generating and sending request
     int packet_bytes;
-    const char* req = "GET / HTTP/1.1\r\n\r\n";
+    const char* req = "GET / HTTP/1.0\r\n\r\n";
     for (int cursor = 0; (packet_bytes = write(sock, req+cursor, strlen(req)-cursor)); cursor += packet_bytes);
 
-    //  
-    //  RESPONSE HEADER PARSING
-    //
-    
     // Reading and parsing headers
     struct header headers[HEADER_COUNT];
     char h_buffer[BUFFER_SIZE];
@@ -99,18 +74,14 @@ int main() {
         printf("%s --> %s\n", headers[i].name, headers[i].value);
     }
 
-    //  
-    //  TRANSFER ENCODING DECODE
-    //
+    // Print response body
+    char b_buffer[BUFFER_SIZE];
+    int res_size = 0;
 
-    int i = 0;
-    while (!pb_strcmp(headers[i].name, "Transfer-Encoding") || headers[i++].name) {
-        printf("Test");
+    for (int cursor = 0; (packet_bytes = read(sock, b_buffer+cursor, BUFFER_SIZE-cursor)); cursor += packet_bytes) {
+        res_size += packet_bytes;
     }
-    if (headers[i].name && pb_strcmp(headers[i].value, "chunked")) {
-        // Parsing chunks
-        printf("Transfer Encoding Chunked\n");
 
-    }
+    b_buffer[res_size] = 0;
+    printf("%.2f MB from SERVER: \n%s\n", (double)res_size/1000000, b_buffer);
 }
-

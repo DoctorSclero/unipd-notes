@@ -1,0 +1,5 @@
+# Java compiled classes
+*.class
+
+# Apple database files
+.DS_Store

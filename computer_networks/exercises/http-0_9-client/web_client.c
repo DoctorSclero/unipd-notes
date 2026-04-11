@@ -43,15 +43,21 @@ int main() {
 
     // The count parameter does not take into account the
     // terminator char '/0'
-    const char* req = "GET /\n";
-    write(sock, req, 6);
+    int packet_bytes;
+    const char* req = "GET /\r\n";
+
+    // Finchè la write non ha finito di scrivere aka finchè non ritorna 0
+    // aka ho finito di inviare i dati.
+    for (int cursor = 0; packet_bytes = write(sock, req+cursor, 8-cursor); cursor += packet_bytes);
 
     const int buffer_size = 1000000; // Buffer size 1MB
     char res[buffer_size];
     int res_size = 0;
-    int cursor = 0;
 
-    for (int packet_bytes=0; packet_bytes = read(sock, res+cursor, buffer_size-cursor); cursor += packet_bytes) {
+    // Finchè la read non restituisce 0 AKA: finchè la trasmissione non è terminata
+    // faccio un append di buffer_size-cursor elementi. Cursor tiene traccia della
+    // posizione dell'ultimo carattere inserito.
+    for (int cursor = 0; packet_bytes = read(sock, res+cursor, buffer_size-cursor); cursor += packet_bytes) {
         res_size += packet_bytes;
     }
     res[res_size] = 0;
