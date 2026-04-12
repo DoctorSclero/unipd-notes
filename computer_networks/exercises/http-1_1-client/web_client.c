@@ -1,38 +1,18 @@
 #include <errno.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <netinet/ip.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
-const int BUFFER_SIZE = 1000000; // Buffer size 1MB
-const int HEADER_COUNT = 10000; // Max header count 10k
-
-struct sockaddr_in server;
-struct header {
-    char* name;
-    char* value;
-};
-
-int pb_strcmp(char* s1, char* s2) {
-    while (!(*s1) || !(*s2)) {
-        if ((*(s1++)) != (*(s2++)))
-            return 0;
-    }
-    return 1;
-}
-
-int pb_stoi(char* s) {
-    int res = 0;
-    while (*s != 0) {
-        res*=10;
-        res+=*s-'0';
-    }
-    return res;
-}
+#include "types.h"
 
 int main() {
+
+    struct sockaddr_in server;
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
@@ -83,7 +63,7 @@ int main() {
             headers[h_index].value = h_buffer+i+2;
         }
         // Checking for end of header section
-        if (h_buffer[i-1] == '\r' && h_buffer[i] == '\n' ) { 
+        if (i > 0 && h_buffer[i-1] == '\r' && h_buffer[i] == '\n' ) { 
             // Marking end of header value
             h_buffer[i-1] = 0;
             // If the last header has no name because the line started with
@@ -93,24 +73,62 @@ int main() {
             headers[++h_index].name = h_buffer+i+1;
         }
     }
-
+    /*
     // Print recorded headers
     for (int i = 0; headers[i].name[0]; i++) {
         printf("%s --> %s\n", headers[i].name, headers[i].value);
     }
+    printf("\n");
+    */
 
     //  
     //  TRANSFER ENCODING DECODE
     //
 
-    int i = 0;
-    while (!pb_strcmp(headers[i].name, "Transfer-Encoding") || headers[i++].name) {
-        printf("Test");
-    }
-    if (headers[i].name && pb_strcmp(headers[i].value, "chunked")) {
-        // Parsing chunks
-        printf("Transfer Encoding Chunked\n");
+    int i=0;
+    while (strcmp(headers[i].name, "Transfer-Encoding") && headers[i].name[0]) {i++;}
 
+    // Check for chunked data
+    if (headers[i].name[0] && !strcmp(headers[i].value, "chunked")) {
+        int chunk_bytes = 0;
+
+        do {
+            // Extract chuncked data
+            char b_buffer[BUFFER_SIZE];
+            char* chunk_data;
+            char* chunk_size = b_buffer;
+
+            // Gathering chunk size
+            for (int cursor = 0; read(sock, b_buffer+cursor, 1); cursor++) {
+                // Ignoring extensions
+                if (b_buffer[cursor]==';') {
+                    b_buffer[cursor] = 0;
+                }
+                // Capturing trailing CRLF
+                if (cursor > 0 && b_buffer[cursor-1] == '\r' && b_buffer[cursor] == '\n') {
+                    b_buffer[cursor-1] = 0;
+                    chunk_data = b_buffer+cursor+1;
+                    break;
+                }
+            }
+
+            // printf("Chunk data size: %s", chunk_size);
+
+            // Translating chunk size 
+            chunk_bytes = (int)strtol(chunk_size, 0, 16);
+
+            // printf(" --> %d bytes\n\n", chunk_bytes);
+
+            // Reading chunk-data bytes
+            int cursor = 0;
+            for (int rbytes = 0; rbytes = read(sock, chunk_data+cursor, chunk_bytes-cursor+2); cursor+=rbytes) {};
+            chunk_data[cursor-1]=0;
+            if (chunk_bytes) printf("%s\n", chunk_data);
+        } while (chunk_bytes);
+         
     }
+
+    close(sock);
+    return EXIT_SUCCESS;
 }
 
