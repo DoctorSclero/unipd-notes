@@ -1,18 +1,29 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <netinet/ip.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#include "types.h"
+// Buffer size 1MB
+#define BUFFER_SIZE 1000000
+#define HEADER_COUNT 1000
+
+struct header {
+    char* name;
+    char* value;
+};
 
 int main() {
 
     struct sockaddr_in server;
+
+    //
+    //  SOCKET CREATION
+    //
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
@@ -20,14 +31,15 @@ int main() {
         return errno;
     }
 
-    // Connect to google.com
-    // We write write the address byte then we
-    // convert it to a int32 casting it to a in_addr_t
-    char addr[4] = {142, 250, 151, 147};
 
+    //
+    //  SOCKET CONNECTION
+    //
+
+    // Target socket address
     server.sin_family = AF_INET;
     server.sin_port = htons(80);
-    server.sin_addr.s_addr = *( in_addr_t* ) addr;
+    inet_pton(AF_INET, "142.251.141.238", &server.sin_addr.s_addr);
 
     if (connect(sock, (const struct sockaddr*)&server, sizeof(struct sockaddr)) == -1) {
         perror("Connection failed");
@@ -48,13 +60,16 @@ int main() {
     //
     
     // Reading and parsing headers
-    struct header headers[HEADER_COUNT];
-    char h_buffer[BUFFER_SIZE];
+    struct header headers[HEADER_COUNT] = {0};
+    // Initialization to 0 prevents bugs in parsing and
+    // buffer overflows
+    char h_buffer[BUFFER_SIZE] = {0};
     int h_index = 0;
 
     // Setting the first header
     headers[h_index].name = h_buffer;
-    for (int i = 0; read(sock, h_buffer+i, 1); i++) {
+    // Leaving space in the buf for the terminator char to prevent overflows
+    for (int i = 0; i < BUFFER_SIZE-1 && read(sock, h_buffer+i, 1); i++) {
         if (h_buffer[i] == ':' && !headers[h_index].value) {
             // Replacing separator with string terminator
             // to split into two separate strings
@@ -64,6 +79,12 @@ int main() {
         }
         // Checking for end of header section
         if (i > 0 && h_buffer[i-1] == '\r' && h_buffer[i] == '\n' ) { 
+            // Checking for too many headers
+            if (h_index >= HEADER_COUNT) {
+                errno = EMSGSIZE;
+                perror("Header array overflow");
+                return errno;
+            }
             // Marking end of header value
             h_buffer[i-1] = 0;
             // If the last header has no name because the line started with
@@ -73,13 +94,12 @@ int main() {
             headers[++h_index].name = h_buffer+i+1;
         }
     }
-    /*
+
     // Print recorded headers
     for (int i = 0; headers[i].name[0]; i++) {
         printf("%s --> %s\n", headers[i].name, headers[i].value);
     }
     printf("\n");
-    */
 
     //  
     //  TRANSFER ENCODING DECODE
@@ -90,42 +110,40 @@ int main() {
 
     // Check for chunked data
     if (headers[i].name[0] && !strcmp(headers[i].value, "chunked")) {
+
         int chunk_bytes = 0;
 
+        // Extract chuncked data
+        char b_buffer[BUFFER_SIZE] = {0};
+        char* chunk_pointer = b_buffer;
+
         do {
-            // Extract chuncked data
-            char b_buffer[BUFFER_SIZE];
-            char* chunk_data;
-            char* chunk_size = b_buffer;
 
             // Gathering chunk size
-            for (int cursor = 0; read(sock, b_buffer+cursor, 1); cursor++) {
+            for (int cursor = 0; read(sock, chunk_pointer+cursor, 1); cursor++) {
                 // Ignoring extensions
-                if (b_buffer[cursor]==';') {
-                    b_buffer[cursor] = 0;
+                if (chunk_pointer[cursor]==';') {
+                    chunk_pointer[cursor] = 0;
                 }
                 // Capturing trailing CRLF
-                if (cursor > 0 && b_buffer[cursor-1] == '\r' && b_buffer[cursor] == '\n') {
-                    b_buffer[cursor-1] = 0;
-                    chunk_data = b_buffer+cursor+1;
+                if (cursor > 0 && chunk_pointer[cursor-1] == '\r' && chunk_pointer[cursor] == '\n') {
+                    chunk_pointer[cursor-1] = 0;
                     break;
                 }
             }
 
-            // printf("Chunk data size: %s", chunk_size);
-
             // Translating chunk size 
-            chunk_bytes = (int)strtol(chunk_size, 0, 16);
+            chunk_bytes = (int)strtol(chunk_pointer, 0, 16);
 
-            // printf(" --> %d bytes\n\n", chunk_bytes);
-
-            // Reading chunk-data bytes
+            // Reading chunk data
             int cursor = 0;
-            for (int rbytes = 0; rbytes = read(sock, chunk_data+cursor, chunk_bytes-cursor+2); cursor+=rbytes) {};
-            chunk_data[cursor-1]=0;
-            if (chunk_bytes) printf("%s\n", chunk_data);
+            for (int rbytes = 0; rbytes = read(sock, chunk_pointer+cursor, chunk_bytes-cursor+2); cursor+=rbytes);
+            // Preparing for new write
+            chunk_pointer+=cursor-2;
+
+
         } while (chunk_bytes);
-         
+        printf("%s\n", b_buffer); 
     }
 
     close(sock);
