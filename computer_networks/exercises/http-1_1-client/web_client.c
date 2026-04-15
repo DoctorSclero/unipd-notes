@@ -114,8 +114,8 @@ int main() {
         int chunk_bytes = 0;
 
         // Extract chuncked data
-        char b_buffer[BUFFER_SIZE] = {0};
-        char* chunk_pointer = b_buffer;
+        char b_buffer_data[BUFFER_SIZE] = {0};
+        char* chunk_pointer = b_buffer_data;
 
         do {
 
@@ -143,7 +143,7 @@ int main() {
 
 
         } while (chunk_bytes);
-        printf("%s\n", b_buffer); 
+        printf("%s\n", b_buffer_data); 
     }
 
     close(sock);
