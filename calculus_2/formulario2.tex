@@ -1,0 +1,30 @@
+{\color{navy}\subsection*{6. Teoria dell'Affidabilità}}
+Sia $T \ge 0$ il tempo di vita di un sistema con densità $f(t)$ e ripartizione $F(t)$.
+\begin{itemize}
+    \item \textbf{Funzione di Sopravvivenza}:
+    \[ R(t) = P(T > t) = 1 - F(t) = \int_t^{+\infty} f(u)du \]
+    \item \textbf{Hazard Rate (Tasso di Guasto)}:
+    \[ \lambda(t) = \lim_{dt \to 0} \frac{P(t \le T < t+dt \mid T > t)}{dt} = \frac{f(t)}{R(t)} = -\frac{d}{dt}\ln R(t) \]
+    \item \textbf{Relazione Fondamentale}:
+    \[ R(t) = e^{-\Lambda(t)} \quad \text{con} \quad \Lambda(t) = \int_0^t \lambda(u)du \quad \text{(Hazard Cumulato)} \]
+    \item \textbf{Densità in funzione di $\lambda(t)$}:
+    \[ f(t) = \lambda(t) e^{-\int_0^t \lambda(u)du} = \lambda(t) R(t) \]
+    \item \textbf{Tempo di Vita Medio (MTTF)}:
+    \[ \mathbb{E}[T] = \int_0^{+\infty} R(t)dt \qquad \mathbb{E}[T^2] = 2\int_0^{+\infty} t R(t)dt \]
+    \[ \text{Var}(T) = \mathbb{E}[T^2] - (\mathbb{E}[T])^2 = 2\int_0^{+\infty} t R(t)dt - \left(\int_0^{+\infty} R(t)dt\right)^2 \]
+\end{itemize}
+
+{\color{navy}\subsection*{7. Modelli di Affidabilità Notevoli}}
+\begin{itemize}
+    \item \textbf{Caso Esponenziale} ($\lambda(t) = \lambda > 0$, tasso costante):
+    \[ R(t) = e^{-\lambda t}, \quad f(t) = \lambda e^{-\lambda t}, \quad \mathbb{E}[T] = \frac{1}{\lambda}, \quad \text{Var}(T) = \frac{1}{\lambda^2} \]
+    \item \textbf{Caso Weibull} ($\lambda(t) = \alpha \beta t^{\beta-1}$ con $\alpha, \beta > 0$):
+    \begin{itemize}
+        \item Se $\beta = 1$: Esponenziale (tasso costante $\alpha$).
+        \item Se $\beta > 1$: Tasso crescente (usura/invecchiamento).
+        \item Se $\beta < 1$: Tasso decrescente (mortalità infantile).
+    \end{itemize}
+    \[ R(t) = e^{-\alpha t^\beta}, \quad f(t) = \alpha \beta t^{\beta-1} e^{-\alpha t^\beta} \]
+    \[ \mathbb{E}[T] = \alpha^{-1/\beta} \Gamma\left(1 + \frac{1}{\beta}\right) \]
+    \[ \text{Var}(T) = \alpha^{-2/\beta} \left[ \Gamma\left(1 + \frac{2}{\beta}\right) - \Gamma^2\left(1 + \frac{1}{\beta}\right) \right] \]
+\end{itemize}

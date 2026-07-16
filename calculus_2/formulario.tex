@@ -1,0 +1,121 @@
+\documentclass[9pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[landscape, margin=0.8cm]{geometry} % Orizzontale con margini ridotti
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{enumitem}
+
+\definecolor{navy}{RGB}{0, 51, 102}
+
+% Configurazione liste estremamente compatte
+\setlist[itemize]{noitemsep, topsep=0pt, parsep=0pt, partopsep=0pt, leftmargin=*}
+\setlist[enumerate]{noitemsep, topsep=0pt, parsep=0pt, partopsep=0pt, leftmargin=*}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\columnsep}{0.6cm} % Spazio tra le colonne
+
+\begin{document}
+
+\begin{center}
+    {\fontsize{12}{14}\selectfont\bfseries\color{navy} Calcolo delle Probabilità --- Formulario per l'Esame} \\
+    \vspace{1pt}
+    {\fontsize{8}{9}\selectfont Ingegneria Informatica --- Università degli Studi di Padova}
+\end{center}
+
+\vspace{-6pt}
+\hrule height 0.6pt color navy
+\vspace{4pt}
+
+\begin{multicols*}{3}
+
+{\color{navy}\subsection*{1. Fondamenti e Condizionata}}
+Sia $\Omega$ lo spazio campionario e $A, B \subseteq \Omega$ eventi.
+\begin{itemize}
+    \item \textbf{Kolmogorov}: $0 \le P(A) \le 1$, $P(\Omega) = 1$. Se $\{A_n\}$ disgiunti: $P(\bigcup_n A_n) = \sum_n P(A_n)$.
+    \item \textbf{Proprietà}: $P(A \cup B) = P(A) + P(B) - P(A \cap B)$. Se $A \subseteq B \implies P(A) \le P(B)$.
+    \item \textbf{Condizionata} ($P(B) > 0$): $P(A|B) = \frac{P(A \cap B)}{P(B)}$
+    \item \textbf{Probabilità Totale} (con $\{B_i\}$ partizione):
+    \[ P(A) = \sum_{i=1}^{n} P(A|B_i)P(B_i) \]
+    \item \textbf{Bayes}: $P(B_i|A) = \frac{P(A|B_i)P(B_i)}{\sum_{j=1}^n P(A|B_j)P(B_j)}$
+    \item \textbf{Indipendenza}: $A \perp B \iff P(A \cap B) = P(A)P(B)$.
+\end{itemize}
+
+{\color{navy}\subsection*{2. Variabili Aleatorie Discrete}}
+$X$ è discreta se $Im(X)$ è finita o numerabile.
+\begin{itemize}
+    \item \textbf{Densità e Ripartizione}: $p_X(x) = P(X = x)$, $\sum p_X(x) = 1$. $F_X(x) = P(X \le x) = \sum_{y \le x} p_X(y)$.
+    \item \textbf{Media e Varianza}:
+    \[ \mathbb{E}[X] = \sum_{x} x p_X(x), \quad \mathbb{E}[g(X)] = \sum_{x} g(x) p_X(x) \]
+    \[ \text{Var}(X) = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \]
+    \item \textbf{Proprietà}: $\mathbb{E}[aX+b] = a\mathbb{E}[X]+b$, $\text{Var}(aX+b) = a^2\text{Var}(X)$.
+\end{itemize}
+
+\textit{\textbf{Distribuzioni Discrete Notevoli}:} \\
+\textbf{Bernoulli} $X \sim Be(p)$, $k \in \{0, 1\}$:
+\[ p_X(k) = p^k(1-p)^{1-k} \implies \mathbb{E}[X]=p, \, \text{Var}(X)=p(1-p) \]
+\textbf{Binomiale} $X \sim Bin(n, p)$, $k \in \{0, \dots, n\}$:
+\[ P(X = k) = \binom{n}{k} p^k (1-p)^{n-k} \implies \mathbb{E}[X]=np, \, \text{Var}=np(1-p) \]
+\textbf{Geometrica} $X \sim Geo(p)$, $k \ge 1$ (istante $1^\circ$ successo):
+\[ P(X = k) = p(1-p)^{k-1} \implies \mathbb{E}[X]=\frac{1}{p}, \, \text{Var}=\frac{1-p}{p^2} \]
+Memoryless: $P(X > k+m \mid X > k) = P(X > m) = (1-p)^m$. \\
+\textbf{Poisson} $X \sim Po(\lambda)$, $k \in \mathbb{N}$:
+\[ P(X = k) = e^{-\lambda} \frac{\lambda^k}{k!} \implies \mathbb{E}[X] = \text{Var}(X) = \lambda \]
+
+{\color{navy}\subsection*{3. Variabili Aleatorie Continue}}
+\begin{itemize}
+    \item \textbf{Densità e Ripartizione}: $P(X \in A) = \int_A f_X(x)dx$.
+    \[ F_X(x) = \int_{-\infty}^{x} f_X(t)dt \implies F'_X(x) = f_X(x) \]
+    \item \textbf{Media e Varianza}:
+    \[ \mathbb{E}[X] = \int_{\mathbb{R}} x f_X(x)dx, \quad \mathbb{E}[g(X)] = \int_{\mathbb{R}} g(x) f_X(x)dx \]
+    \[ \text{Var}(X) = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \]
+\end{itemize}
+
+\textit{\textbf{Distribuzioni Continue Notevoli}:} \\
+\textbf{Uniforme} $X \sim U(a, b)$:
+\[ f_X(x) = \frac{1}{b-a} \mathbb{I}_{(a,b)}(x) \implies \mathbb{E}[X] = \frac{a+b}{2}, \, \text{Var}(X) = \frac{(b-a)^2}{12} \]
+\textbf{Esponenziale} $X \sim Exp(\lambda)$, $x \ge 0$ (tempo di attesa):
+\[ f_X(x) = \lambda e^{-\lambda x} \implies \mathbb{E}[X] = \frac{1}{\lambda}, \, \text{Var}(X) = \frac{1}{\lambda^2} \]
+Ripartizione: $F_X(x) = 1 - e^{-\lambda x}$. Memoryless: $P(X > t+s \mid X > s) = P(X > t)$. \\
+\textbf{Gamma} $X \sim \Gamma(\alpha, \lambda)$, $x \ge 0$:
+\[ f_X(x) = \frac{\lambda e^{-\lambda x} (\lambda x)^{\alpha-1}}{\Gamma(\alpha)} \implies \mathbb{E}[X]=\frac{\alpha}{\lambda}, \, \text{Var}(X)=\frac{\alpha}{\lambda^2} \]
+Se $\alpha = n \in \mathbb{N}$, è la somma di $n$ $Exp(\lambda)$ i.i.d. \\
+\textbf{Normale} $X \sim \mathcal{N}(\mu, \sigma^2)$:
+\[ f_X(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}} \implies \mathbb{E}[X] = \mu, \, \text{Var}(X) = \sigma^2 \]
+Standardizzazione: $Z = \frac{X-\mu}{\sigma} \sim \mathcal{N}(0, 1)$. $\Phi(-z) = 1 - \Phi(z)$.
+
+{\color{navy}\subsection*{4. Variabili Congiunte e Covarianza}}
+\begin{itemize}
+    \item \textbf{Marginali}: $f_X(x) = \int_{\mathbb{R}} f_{X,Y}(x,y)dy$, $f_Y(y) = \int_{\mathbb{R}} f_{X,Y}(x,y)dx$.
+    \item \textbf{Indipendenza}: $X \perp Y \iff f_{X,Y}(x,y) = f_X(x)f_Y(y)$. \\
+    Se $X \perp Y \implies \mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$.
+    \item \textbf{Covarianza}: $\text{Cov}(X,Y) = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$.
+    Se $X \perp Y \implies \text{Cov}(X,Y) = 0$.
+    \item \textbf{Varianza della Somma}:
+    \[ \text{Var}(X \pm Y) = \text{Var}(X) + \text{Var}(Y) \pm 2\text{Cov}(X,Y) \]
+    Se $X \perp Y \implies \text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$.
+    \item \textbf{Convoluzione} (Somma di continue $X \perp Y$):
+    \[ f_{X+Y}(z) = \int_{\mathbb{R}} f_X(z-y)f_Y(y)dy \]
+\end{itemize}
+
+{\color{navy}\subsection*{5. Teoremi Limite e Stime}}
+\begin{itemize}
+    \item \textbf{Markov} ($X \ge 0$): $P(X \ge a) \le \frac{\mathbb{E}[X]}{a}$ per ogni $a > 0$.
+    \item \textbf{Chebyshev}: $P(|X - \mu| \ge c) \le \frac{\text{Var}(X)}{c^2}$ per ogni $c > 0$.
+    \item \textbf{Media Campionaria}: $\overline{X}_n = \frac{1}{n} \sum_{i=1}^n X_i$. Se $X_i$ i.i.d.:
+    \[ \mathbb{E}[\overline{X}_n] = \mu, \quad \text{Var}(\overline{X}_n) = \frac{\sigma^2}{n} \]
+    \item \textbf{Legge Debole (LLN)}: $\lim_{n\to\infty} P(|\overline{X}_n - \mu| > \epsilon) = 0$.
+    \item \textbf{Limite Centrale (CLT)}: Siano $X_1, \dots, X_n$ i.i.d.:
+    \[ \frac{\overline{X}_n - \mu}{\sigma/\sqrt{n}} \xrightarrow{d} Z \sim \mathcal{N}(0, 1) \]
+    Per la somma $S_n = \sum_{i=1}^n X_i \approx \mathcal{N}(n\mu, n\sigma^2)$:
+    \[ P(S_n \le x) \approx \Phi\left(\frac{x - n\mu}{\sigma \sqrt{n}}\right) \]
+    \item \textbf{Correzione di Continuità} (da discreta $X$ a continua $Y$):
+    \[ P(X \ge k) \approx P(Y \ge k - 0.5) \]
+    \[ P(X = k) \approx P(k - 0.5 \le Y \le k + 0.5) \]
+\end{itemize}
+
+\end{multicols*}
+
+\end{document}
