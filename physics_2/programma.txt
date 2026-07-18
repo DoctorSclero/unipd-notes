@@ -1,0 +1,9 @@
+CAPITOLO 1 Sezioni da 1.1 a 1.7 inclusa
+CAPITOLO 2 Sezioni da 2.1 a 2.8 inclusa, tranne la sottosezione dal titolo Dipolo in campo elettrico non uniforme
+CAPITOLO 3 Tutte le sezioni del capitolo
+CAPITOLO 4 Sezioni da 4.1 a 4.7 inclusa. No sezione 4.8
+CAPITOLO 5 Sezioni 5.1, 5.2, 5.3, 5.5, 5.6, 5.7, 5.8. No sezione 5.4, 5.9, 5.10
+CAPITOLO 6 Tutte le sezioni. Della sezione 6.8 solo la sottosezione Selettore Velocità
+CAPITOLO 7 Sezioni 7.1, 7.2, 7.3, 7.4, 7.5, 7.7. No sezioni 7.6 e 7.8 CAPITOLO 8 Tutte le sezioni. Della sezione 8.6 esclusa la sottosezione Energia magnetica di circuiti accoppiati
+CAPITOLO 9 Solo la sezione 9.3 (Circuito RLC in serie. Risonanza)
+CAPITOLO 10 Sezioni 10.1, 10.2, 10.3, 10.4, 10.6, 10.8
